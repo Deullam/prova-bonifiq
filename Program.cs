@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using ProvaPub.Models.Features.Orders;
 using ProvaPub.Repository;
 using ProvaPub.Services;
+using ProvaPub.Services.Features.Orders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,15 @@ builder.Services.AddSingleton<RandomService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+
+var paymentMethods = new Dictionary<PaymentMethod, IPaymentMethod>
+    {
+        { PaymentMethod.Pix, new PixPayment() },
+        { PaymentMethod.CreditCard, new CreditCardPayment() },
+        { PaymentMethod.PayPal, new PayPalPayment() }
+    };
+builder.Services.AddSingleton<IDictionary<PaymentMethod, IPaymentMethod>>(paymentMethods);
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddDbContext<TestDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("ctx")));

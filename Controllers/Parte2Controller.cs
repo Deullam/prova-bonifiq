@@ -4,8 +4,6 @@ using ProvaPub.Services;
 
 namespace ProvaPub.Controllers
 {
-
-
     /// <summary>
     /// Precisamos fazer algumas alterações:
     /// 1 - Não importa qual page é informada, sempre são retornados os mesmos resultados. Faça a correção.
@@ -34,9 +32,7 @@ namespace ProvaPub.Controllers
             _customerService = customerService;
         }
 
-        /// <summary>
-        /// Lista os produtos com base no número da página.
-        /// </summary>
+        /// <summary> Lista os produtos com base no número da página. </summary>
         /// <param name="page">O número da página.</param>
         /// <returns>Uma ação HTTP que produzirá um objeto JSON contendo a lista de produtos ou uma resposta de erro 400 se o número da página for menor ou igual a zero.</returns>
         [HttpGet("products")]
@@ -57,12 +53,9 @@ namespace ProvaPub.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        /// <summary>
-        /// Lista os clientes com base no número da página.
-        /// </summary>
+        /// <summary> Lista os clientes com base no número da página. </summary>
         /// <param name="page">O número da página.</param>
         /// <returns>Uma ação HTTP que produzirá um objeto JSON contendo a lista de clientes ou uma resposta de erro 400 se o número da página for menor ou igual a zero.</returns>
-
         [HttpGet("customers")]
         public ActionResult<CustomerList> ListCustomers(int page)
         {
@@ -72,7 +65,6 @@ namespace ProvaPub.Controllers
                 {
                     throw new InvalidPageNumberException();
                 }
-
                 var customerList = _customerService.ListCustomers(page);
                 return Ok(customerList);
             }
