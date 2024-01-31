@@ -1,23 +1,34 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProvaPub.Models;
 using ProvaPub.Repository;
+using ProvaPub.Services.Base;
 
 namespace ProvaPub.Services
 {
-    public class CustomerService
+    public class CustomerService : PagedEntityService<Customer>, ICustomerService
     {
         TestDbContext _ctx;
+        public CustomerService(TestDbContext context) : base(context) { }
 
-        public CustomerService(TestDbContext ctx)
-        {
-            _ctx = ctx;
-        }
-
+        /// <summary>
+        /// Lista os clientes paginados.
+        /// </summary>
+        /// <param name="page">O número da página.</param>
+        /// <returns>Uma lista paginada de clientes.</returns>
         public CustomerList ListCustomers(int page)
         {
-            return new CustomerList() { HasNext = false, TotalCount = 10, Customers = _ctx.Customers.ToList() };
+            var query = _context.Customers.AsQueryable();
+            var customers = GetPagedResultsAsync(query, page).Result;
+
+            return new CustomerList { Customers = customers, HasNext = true, TotalCount = 100 };
         }
 
+        /// <summary>
+        /// Verifica se um cliente pode fazer uma compra.
+        /// </summary>
+        /// <param name="customerId">O ID do cliente.</param>
+        /// <param name="purchaseValue">O valor da compra.</param>
+        /// <returns>True se o cliente pode fazer a compra, caso contrário, false.</returns>
         public async Task<bool> CanPurchase(int customerId, decimal purchaseValue)
         {
             if (customerId <= 0) throw new ArgumentOutOfRangeException(nameof(customerId));
@@ -42,5 +53,9 @@ namespace ProvaPub.Services
             return true;
         }
 
+        public Task<List<Customer>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
